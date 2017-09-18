@@ -3,6 +3,9 @@
  * 首页banner表
  */
 const Sequelize = require('sequelize');
+const link_fields = require('../config/field_auto_update').banner || [];
+const log = require('../libs/logger').tag('models-banner');
+const auto = require('../libs/auto');
 let tableName = 'banner';
 module.exports = {
     tableName: tableName,
@@ -42,6 +45,29 @@ module.exports = {
     sets: {
         timestamps: false,
         underscored: true,
+        
+        hooks: {
+            afterUpdate: async function (ts, options) {
+                const models = require('../models');
+                let t = options.transaction;
+                let trx = t || (await models.sequelize.transaction());
+                try {
+                    await auto.udaterfield(tableName,link_fields,ts.dataValues,ts._changed,trx);   // { transaction: trx } 
+                    /********************用户代码段开始*********************/
+
+                    // TODO 后续逻辑代码
+                    // 注：　trx　事务对象一定存在，若不需要事务，可以不使用trx
+
+                    /********************用户代码段结束*********************/
+                    t || (await trx.commit());
+                } catch (e) {
+                    t || (await trx.rollback());
+                    log.error({data: e},'事务执行失败');
+                    throw new Error('Error: 事务执行失败:' + JSON.stringify(e));
+                }
+            }
+        },
+
         freezeTableName: false,   
         classMethods: {
             // 给某个字段增加值，field参数可以直接是字段名，也可以是对象，如: {name: 3, age: 5}
