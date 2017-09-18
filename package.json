@@ -1,0 +1,74 @@
+{
+  "name": "koa-baseframe",
+  "version": "1.0.0",
+  "description": "common app framework",
+  "main": "app.js",
+  "scripts": {
+    "start": "node bin/www.js",
+    "start_pm2": "pm2 start pm2_config.json",
+    "initDb": "node bin/init_table.js all && node bin/init_table.js the_log_db",
+    "syncDoc": "sudo apidoc -i routes/ -o public/apidoc/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muguang-lijing/koa-baseframe.git"
+  },
+  "keywords": [
+    "koa"
+  ],
+  "author": "lijing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/muguang-lijing/koa-baseframe/issues"
+  },
+  "homepage": "https://github.com/muguang-lijing/koa-baseframe#readme",
+  "dependencies": {
+    "art-template": "^4.11.0",
+    "bunyan": "^1.8.10",
+    "bytes": "^2.5.0",
+    "cli-table": "^0.3.1",
+    "ioredis": "^3.1.1",
+    "koa": "^2.2.0",
+    "koa-art-template": "^1.1.1",
+    "koa-body": "^2.1.0",
+    "koa-json": "^2.0.2",
+    "koa-redis": "^3.0.0",
+    "koa-router": "^7.2.1",
+    "koa-session": "^5.3.0",
+    "koa-static": "^3.0.0",
+    "mime": "^1.3.6",
+    "moment": "^2.18.1",
+    "mz": "^2.6.0",
+    "pg": "^6.2.4",
+    "pg-hstore": "^2.3.2",
+    "pg-native": "^2.2.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "sequelize": "^4.1.0",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-latest": "^6.24.1",
+    "gulp": "^3.9.1",
+    "gulp-asset-rev": "^0.0.15",
+    "gulp-babel": "^6.1.2",
+    "gulp-cache": "^0.4.6",
+    "gulp-clean": "^0.3.2",
+    "gulp-connect": "^5.0.0",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-imagemin": "^3.3.0",
+    "gulp-less": "^3.3.2",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-uglify": "^2.1.2",
+    "gulp-webpack": "^1.5.0",
+    "mocha": "^3.2.0",
+    "request": "^2.81.0",
+    "should": "^11.2.1",
+    "supertest": "^3.0.0",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^3.0.0"
+  }
+}
