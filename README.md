@@ -9,3 +9,4 @@
 - 2.安装包：　　　`npm install`  
 - 3.开发时启动，执行 `electron .`  
 - 4.打包发布，确保pack.sh文件有执行权限，执行 `./pack.sh` 将生成的 `app.asar` 放到各个平台的electron环境中即可
+- 5.下载各个平台下的可执行包[https://github.com/electron/electron/releases]，然后将第４步打包的app.asar放到各个平台可执行包的资源文件夹下就可以了，放到各个平台，就可以点击可执行文件直接使用了

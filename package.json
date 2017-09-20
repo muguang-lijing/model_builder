@@ -1,5 +1,5 @@
 {
-  "name": "koa-baseframe",
+  "name": "model_builder",
   "version": "1.0.0",
   "description": "common app framework",
   "main": "bin/www.js",
