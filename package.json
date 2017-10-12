@@ -1,7 +1,7 @@
 {
   "name": "model_builder",
   "version": "1.0.0",
-  "description": "common app framework",
+  "description": "模型构建器",
   "main": "bin/www.js",
   "scripts": {
     "start": "node bin/www.js",
