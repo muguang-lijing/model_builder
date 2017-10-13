@@ -73,6 +73,70 @@ router.get('/model_list', async (ctx,next) => {
 });
 
 /**
+ * @api {post} /main/add_model 添加一个新的模型  
+ * @apiDescription 作者：李静  
+ * 
+ * @apiVersion 0.0.1
+ * @apiName add_model
+ * @apiGroup Main
+ * 
+ * @apiParam {String} model_name 模型名称 
+ * @apiParam {String} model_desc 模型简介 
+ * 
+ * @apiSuccess {Object} err ${错误信息}
+ * @apiSuccess {Object} out ${成功信息}
+ * @apiSuccessExample {json} 成功时返回的结果：
+ * {
+ * 	err: { code: 0 },
+ * 	out: {
+ * 		status: true
+ * 	}
+ * }
+ */
+router.post('/add_model', async (ctx,next) => {
+    let rbody = ctx.request.body;
+    let model_name = rbody.model_name;
+    // #region
+    let model_str = `"use strict";
+    /**
+     * ${ rbody.model_desc }
+     */
+    const Sequelize = require('sequelize');
+    const tableName = '${model_name}';
+    const log = require('../libs/logger').tag('models-'+tableName);
+    const util = require('util');
+    
+    module.exports = {
+        tableName: tableName,
+        cols: {
+            id: {
+                type: Sequelize.CHAR(36),
+                defaultValue: Sequelize.UUIDV1,
+                primaryKey: true,
+                comment: 'uuid'
+            }
+        },
+        sets: {
+            timestamps: false,
+            underscored: true,
+            freezeTableName: false,
+            tableName: tableName,
+            indexes: [{
+                fields: []
+            }],
+            classMethods: {
+            },
+            hooks: {
+            }
+        }
+    };`;
+    // #endregion
+    const fpath = path.join(models_dir,model_name+'.js');
+    fs.writeFileSync(fpath,model_str);
+    ctx.body = { err: {code: 0}, out: {status: true} };
+});
+
+/**
  * @api {get} /main/model_info 根据模型名称获取某个模型的信息 
  * @apiDescription 作者：李静  
  * 
