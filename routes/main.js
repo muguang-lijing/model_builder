@@ -8,6 +8,7 @@ const fs = require('fs');
 const converter = require('../libs/converter_of_model');
 const path = require('path');
 const utils = require('../libs/utils');
+const beautify = require('js-beautify').js_beautify;
 
 let models_dir = ''; // 模型的目录
 
@@ -206,7 +207,7 @@ function replace_and_format(model_name,model_str){
     let set_end_n = utils.find_right_flag(fs_str,'{}',end_n);
     let out_str = fs_str.slice(end_n+1,set_end_n);
     fs_str = fs_str.replace(out_str,model_str);
-    // TODO 格式化
+    fs_str = beautify(fs_str, { indent_size: 4 }); // 格式化
     fs.writeFileSync(fpath,fs_str);
 }
 
