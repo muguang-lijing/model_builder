@@ -1,4 +1,5 @@
 const electron = require('electron');
+
 // 控制应用生命周期的模块。
 const {app} = electron;
 // 创建原生浏览器窗口的模块。
@@ -8,7 +9,8 @@ const {BrowserWindow} = electron;
 let mainWindow;
 function createWindow() {
     // 创建浏览器窗口。
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow = new BrowserWindow({width: 1100, height: 800,frame:false});
+    // frame:false,
     // 加载应用的 index.html。
     mainWindow.loadURL(`file://${__dirname}/public/static/electron.html`);
     // 启用开发工具。
@@ -19,7 +21,8 @@ function createWindow() {
     // 通常会把多个 window 对象存放在一个数组里面,
     // 与此同时,你应该删除相应的元素。
     mainWindow = null;
-    });
+});
+
 }
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -41,5 +44,15 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+//文件对话框
+electron.ipcMain.on('open-file-dialog',function(event){ 
+    electron.dialog.showOpenDialog({
+        properties: ['openFile', 'openDirectory']
+    },function (files) {
+        if (files) event.sender.send('selected-directory', files)
+    })
+
+})
 
 module.exports = electron;

@@ -3,10 +3,116 @@
 <head>
 <meta charset="UTF-8">
 <title>Hello World!</title>
+<link rel="stylesheet" href="./css/iview.css">
+<link rel="stylesheet" href="./css/style.css">
+
+
 </head>
-<body>
-    <script>
-        window.location.href="http://127.0.0.1:5500";
-    </script>
+<body style="-webkit-app-region: drag">
+        <div id = 'app'>
+                <div class = "Initialization" v-if = "initializationshow">
+                        <h1 class = 'title'>Create model</h1><br>
+                        <h1>高效的整套模型创建解决方案</h1><br>
+                        <i-Button id = "select-directory" @click = "openfile">选择模型目录</i-Button>
+                </div>
+                <div v-if = "!initializationshow">
+                        <div class = 'left'>
+                                <div><h1>模型列表</h1></div>
+                                <div class = 'modles'>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                        <div><Icon type="document-text"></Icon><h5>MODELS</h5></div>
+                                </div>
+                        </div>
+                        <div class = 'center'>
+                                <div class = 'header'>
+                                        <p>目录 : <span> <a> {{url}}</a></span></p>
+                                        <i-Button type="primary" size="small" @click = "button.add = true">+</i-Button>
+                                        <Modal
+                                                v-model="button.add"
+                                                title="创建模型"
+                                                @on-ok=""
+                                                @on-cancel="cancel">
+                                                <div>
+                                                        <table>
+                                                                <tr >
+                                                                <td>模型名称： </td>
+                                                                <td><i-Input v-model="models.name" placeholder="请输入..." style="width: 300px"></i-Input></td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td></td>
+                                                                        <td><span>*模型必须使用英文名称，否则会创建失败</span></td>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                        </Modal>
+                                </div>
+                                <div class = 'content'>
+                                        <div style="background:#eee;padding: 20px">
+                                                <Card :bordered="false">
+                                                <p slot="title">模型创建</p>
+                                                        <table>
+                                                                <tr>
+                                                                        <td>模型名称： </td>
+                                                                        <td>
+                                                                           <i-Input v-model="models.name" placeholder="请输入..." style="width: 300px"></i-Input>
+                                                                           <span>*模型必须使用英文名称，否则会创建失败</span>
+                                                                        </td>
+                                                                </tr>
+                                                        </table>
+                                                </Card>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
 </body>
 </html>
+
+<script type="text/javascript" src = "./js/vue.js"></script>
+<script type="text/javascript" src = "./js/iview.js"></script>
+<script type = 'text/javascript'>
+        const ipc = require('electron').ipcRenderer
+        new Vue({
+                el:'#app',
+                data:{
+                        url:"www/dir/models",
+                        ipc:ipc,
+                        initializationshow:false,
+                        button:{add:false,},
+                        models:{
+                                name:'',
+                                Table:[],
+                        }
+                },
+                methods:{
+                        openfile:function(){
+                                console.log(this.ipc);
+                                this.ipc.send('open-file-dialog');
+                        },
+                        selectdir:function(path){
+                                this.url = path;
+                                this.initializationshow = false;
+                                
+                        }
+                },
+                created(){
+                        var self = this;
+                        this.ipc.on('selected-directory',function(event,path){
+                                self.selectdir(path);
+                        })
+                }
+        })
+       
+
+</script>     
