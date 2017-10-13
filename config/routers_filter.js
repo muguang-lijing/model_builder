@@ -125,6 +125,44 @@ module.exports = {
             }
         ]
     },
+    "/main/set_models_dir": {
+        "apiName": "set_models_dir",
+        "apiGroup": "Main",
+        "apiParams": [
+            {
+                "type": "string",
+                "name": "models_dir",
+                "required": true
+            }
+        ]
+    },
+    "/main/model_info": {
+        "apiName": "model_info",
+        "apiGroup": "Main",
+        "apiParams": [
+            {
+                "type": "string",
+                "name": "model_name",
+                "required": true
+            }
+        ]
+    },
+    "/main/save_model": {
+        "apiName": "save_model",
+        "apiGroup": "Main",
+        "apiParams": [
+            {
+                "type": "string",
+                "name": "model_name",
+                "required": true
+            },
+            {
+                "type": "object",
+                "name": "model_obj",
+                "required": true
+            }
+        ]
+    },
     "/other/upload_base64": {
         "apiName": "uploadBase64",
         "apiGroup": "Other",
