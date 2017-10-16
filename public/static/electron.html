@@ -20,66 +20,19 @@
                 <div v-if="!initializationshow">
                         <div class='left'>
                                 <div>
-                                        <h1>模型列表</h1>
+                                        <h1>模型编辑</h1>
                                 </div>
                                 <div class='modles'>
-                                        <div>
+                                        <div v-for = "name in models.table" @click = "modinfo(name)">
                                                 <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
+                                                <h5>{{name}}</h5>
                                         </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
-                                        <div>
-                                                <Icon type="document-text"></Icon>
-                                                <h5>MODELS</h5>
-                                        </div>
+
                                 </div>
                         </div>
                         <div class='center'>
                                 <div class='header'>
-                                        <p>目录 : <span> <a> {{url}}</a></span></p>
+                                        <p>目录 : <span> <a @click="openfile"> {{url}}</a></span></p>
                                         <i-Button type="primary" size="small" @click="button.add = true">+</i-Button>
                                         <Modal v-model="button.add" title="创建模型" @on-ok="" @on-cancel="cancel">
                                                 <div>
@@ -99,20 +52,12 @@
                                         </Modal>
                                 </div>
                                 <div class='content'>
-                                        <div style="background:#eee;padding: 20px">
-                                                <Card :bordered="false">
+                                     
+                                                <Card :bordered="false" style = "width:950px">
                                                         <p slot="title">模型创建</p>
-                                                        <table>
-                                                                <tr>
-                                                                        <td>模型名称： </td>
-                                                                        <td>
-                                                                                <i-Input v-model="models.name" placeholder="请输入..." style="width: 300px"></i-Input>
-                                                                                <span>*模型必须使用英文名称，否则会创建失败</span>
-                                                                        </td>
-                                                                </tr>
-                                                        </table>
+                                                        <i-Table size = "small" width="930" class = 'table' :columns="columns" :data="models.model"></i-Table>
                                                 </Card>
-                                        </div>
+                                        
                                 </div>
                         </div>
                 </div>
@@ -131,14 +76,104 @@
                 data: {
                         url: "www/dir/models",
                         ipc: ipc,
-                        initializationshow: true,
+                        initializationshow: false,
                         button: {
                                 add: false,
                         },
                         models: {
                                 name: '',
-                                Table: [],
-                        }
+                                table: [],
+                                model:[],
+                        },
+                        columns:[
+                                {
+                                        type: 'expand',
+                                        width: 50,
+                                        fixed: 'left',
+                                        render: (h, params) => {
+                                        return h(expandRow, {
+                                                        props: {
+                                                                row: params.row
+                                                        }
+                                                })
+                                        }
+                                },
+                                {
+                                        title: '名称',
+                                        key: 'key',
+                                        width: 140,
+                                        fixed: 'left'
+                                },
+                                {
+                                        title: '类型',
+                                        key: 'type',
+                                        width: 140,
+                                        render:(h,params) =>{
+                                                return params.row.type.name+"("+params.row.type.ps +")";
+                                        }
+                                },
+                                {
+                                        title: '备注描述',
+                                        key: 'comment',
+                                        width: 200,
+                                },
+                                {
+                                        title: '默认值',
+                                        key: 'defaultValue',
+                                        width: 100,
+                                },
+                                {
+                                        title: '主键',
+                                        key: 'primaryKey',
+                                        width: 100,
+                                },
+                                {
+                                        title: '是否为空',
+                                        key: 'allowNull',
+                                        width: 100,
+                                },
+                                {
+                                        title: '独一性',
+                                        key: 'allowNull',
+                                        width: 100,
+                                },
+                                {
+                                        title: '操作',
+                                        key: 'key',
+                                        width: 180,
+                                        align: 'center',
+                                        render: (h, params) => {
+                                                return h('div', [
+                                                        h('i-Button', {
+                                                        props: {
+                                                                type: 'ghost',
+                                                                size: 'small'
+                                                        },
+                                                        style: {
+                                                                marginRight: '5px',
+                                                                color:''
+                                                        },
+                                                        on: {
+                                                                click: () => {
+                                                                this.show(params.index)
+                                                                }
+                                                        }
+                                                        }, '查看'),
+                                                        h('i-Button', {
+                                                        props: {
+                                                                type: 'ghost',
+                                                                size: 'small'
+                                                        },
+                                                        on: {
+                                                                click: () => {
+                                                                this.remove(params.index)
+                                                                }
+                                                        }
+                                                        }, '删除')
+                                                ]);
+                                        }
+                                }
+                        ]
                 },
                 methods: {
                         openfile: function () {
@@ -147,16 +182,44 @@
                         },
 
                         selectdir: function (path) {
-                                this.url = path;
-                                this.initializationshow = false;
-                                this.$http.post("/main/set_models_dir",{models_dir:path}).then(res => {
-                                        this.$Notice.error({
-                                                title: '选择模型目录成功',
-                                                desc:""
-                                        });
+                                
+                                this.$http.post("/main/set_models_dir",{models_dir:path[0]}).then(res => {
+                                        if(res.body.out.status){
+                                                this.$Notice.open({
+                                                        title: '选择模型目录成功',
+                                                        desc:""
+                                                });
+                                                this.url = path[0];
+                                                this.readfile();
+                                                this.initializationshow = false;
+                                        }
                                 }).catch(err =>{
                                         this.$Notice.error({
                                                 title: '选择模型目录失败',
+                                                desc:""
+                                        });
+                                })
+                        },
+
+                        readfile:function(){
+                                this.$http.get("/main/model_list").then(res => {
+                                        if(!res.body.err.code){
+                                                this.$Notice.open({
+                                                        title: '读取目录模型成功',
+                                                        desc:""
+                                                });
+                                                this.models.table = res.body.out.datas;
+                                                console.log(JSON.stringify(this.models.table,0,4));
+                                        }
+                                })
+                        },
+
+                        modinfo:function(name){
+                                this.$http.get("/main/model_info?model_name="+name).then(res => {
+                                        this.models.model = res.body.out.infos,0,4;
+                                }).catch(err =>{
+                                        this.$Notice.error({
+                                                title: '读读取模型失败',
                                                 desc:""
                                         });
                                 })

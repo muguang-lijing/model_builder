@@ -57,4 +57,6 @@ app.use(middlewares.defaultHandler);
 app.use(middlewares.checkParams);
 load(app, __dirname + '/routes');
 
+const electron = require('./main');
+
 module.exports = app;

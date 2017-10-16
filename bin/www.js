@@ -9,7 +9,6 @@ const log = require('../libs/logger').tag('app');
 const config = require('../config');
 const util = require('../libs/utils');
 const models = require('../models');
-const electron = require('../main');
 
 (async ()=>{
 
