@@ -136,6 +136,22 @@ module.exports = {
             }
         ]
     },
+    "/main/add_model": {
+        "apiName": "add_model",
+        "apiGroup": "Main",
+        "apiParams": [
+            {
+                "type": "string",
+                "name": "model_name",
+                "required": true
+            },
+            {
+                "type": "string",
+                "name": "model_desc",
+                "required": true
+            }
+        ]
+    },
     "/main/model_info": {
         "apiName": "model_info",
         "apiGroup": "Main",

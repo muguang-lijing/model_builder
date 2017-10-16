@@ -12,7 +12,8 @@ function createWindow() {
     mainWindow = new BrowserWindow({width: 1100, height: 800});
     // frame:false,
     // 加载应用的 index.html。
-    mainWindow.loadURL(`file://${__dirname}/public/static/electron.html`);
+    // mainWindow.loadURL(`file://${__dirname}/public/static/electron.html`);
+    mainWindow.loadURL(`http://127.0.0.1:5500/static/electron.html`);
     // 启用开发工具。
     // mainWindow.webContents.openDevTools();
     // 当 window 被关闭,这个事件会被触发。
