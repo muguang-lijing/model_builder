@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        .mrow {
+            background: rgb(236, 230, 230);
+            display:-webkit-flex;
+        }
+    </style>
+    <script src="js/vue.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script type="text/x-template" id="datagrid-item-template">
+        <div id="itembk" :style="style">
+                <div class="mrow" :style="{'border': bdrstyle_value,'border-top': 'none'}">
+                    <div v-for="v in data" :style="getStyle1(v)">{{v.value}}</div>
+                    <div style="width: 16px;font-weight: bold;text-align:center;">
+                        <a @click="ext_btn_click" href="javascript:void(0)" style="text-decoration: none">{{ext_btn_txt}}</a>
+                    </div>
+                </div>
+                <div v-if="ext_show" :style="{background: ext_bkground}">
+                    <div v-for="v in data">
+                            <b>{{v.field}} : </b> {{v.value}}
+                    </div>
+                </div>
+        </div>
+    </script>
+</head>
+<body>
+    <div id="datagrid1">
+        <datagrid-item v-for="v in row_data" :data="v"></datagrid-item>
+    </div>
+</body>
+<script>
+    Vue.component("datagrid-item",{
+        template: "#datagrid-item-template",
+        props: ['data'],
+        data: function(){
+            return {
+                style: {
+                    width: '700px'
+                },
+                bdrstyle_value: "solid 1px #8a7b7b",
+                ext_bkground: "rgb(184, 178, 178)",
+                ext_btn_txt: '-',
+                ext_show: false
+            };
+        },
+        methods: {
+            getStyle1: function(v){
+                var sty = {'border-right': this.bdrstyle_value};
+                if (v.width){
+                    sty.width = v.width;
+                }else{
+                    sty['flex-grow'] = 1;
+                }
+                return sty;
+            },
+            ext_btn_click: function(){
+                if (this.ext_show){
+                    this.ext_btn_txt = '-';
+                }else{
+                    this.ext_btn_txt = '+';
+                }
+                this.ext_show = !this.ext_show;
+            }
+        }
+    });
+
+    var datas = [
+        ['1988293','李静',26,'一个年轻有为，朝气蓬勃的软件攻城狮。。'],
+        ['8348488','金豆',25,'在服务器方面的实力不容小看！！'],
+        ['9839489','黄理',27,'地地道道的php码农，技术绝对一流']
+    ];
+    new Vue({
+        el: '#datagrid1',
+        data: {
+            table: [
+                {
+                    name: 'ID', 
+                    width: '120px'
+                },
+                {
+                    name: '姓名', 
+                    width: '100px'
+                },
+                {
+                    name: '年龄', 
+                    width: '80px'
+                },
+                {
+                    name: '简介'
+                }
+            ],
+            datas: datas
+        },
+        computed: {
+            row_data: function(){
+                var outs = [],out,cur_tb;
+                for (data of this.datas){
+                    out = []
+                    for (var i=0; i<data.length; i++){
+                        cur_tb = this.table[i];
+                        out.push({
+                            field: cur_tb.name,
+                            value: data[i],
+                            width: cur_tb.width
+                        });
+                    }
+                    outs.push(out);
+                }
+                return outs;
+            }
+        }
+    });
+</script>
+</html>
