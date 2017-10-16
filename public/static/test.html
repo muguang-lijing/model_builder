@@ -4,14 +4,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        .item {
+            background: #884;
+            border-right: solid 2px red;
+        }
+    </style>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
 </head>
 <body>
-    <form method="post" action="/test/savefile" enctype="multipart/form-data">
-        <input type="file" name="pic" />
-        <input type="submit" value="提交" />
-    </form>
+    <div style="width: 700px;">
+            <div style="background: rgb(184, 178, 178);height: 100px;display:-webkit-flex;border-left: solid 2px red;">
+                    <div class="item" style="flex-grow:1"></div>
+                    <div class="item" style="width: 10%;"></div>
+                    <div class="item" style="width: 30px;"></div>
+                    <div class="item" style="width: 50px;"></div>
+                    <div class="item" style="flex-grow:1"></div>
+                    <div class="item" style="width: 25%"></div>
+            </div>
+            <div style="background: rgb(235, 141, 141);">
+                lijing
+                <p>筋斗</p>
+            </div>
+    </div>
 </body>
 <script>
+    let 基本组件需要传递的数据 = [
+        {
+            field: "姓名",
+            value: "Lijing"
+        },
+        {
+            field: "年龄",
+            value: 45
+        },
+        {
+            field: "性别",
+            value: false
+        }
+    ]
 </script>
 </html>
