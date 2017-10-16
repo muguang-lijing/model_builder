@@ -10,6 +10,7 @@ let mainWindow;
 function createWindow() {
     // 创建浏览器窗口。
     mainWindow = new BrowserWindow({width: 1100, height: 800});
+    // mainWindow.setMenu(null);
     // frame:false,
     // 加载应用的 index.html。
     // mainWindow.loadURL(`file://${__dirname}/public/static/electron.html`);
@@ -22,7 +23,14 @@ function createWindow() {
     // 通常会把多个 window 对象存放在一个数组里面,
     // 与此同时,你应该删除相应的元素。
     mainWindow = null;
-});
+
+  
+   
+    });
+
+    mainWindow.on('resize',function(event){
+        event.sender.send('winresize','窗口发生变化')
+    }) 
 
 }
 // This method will be called when Electron has finished
@@ -46,6 +54,7 @@ app.on('activate', () => {
     }
 });
 
+
 //文件对话框
 electron.ipcMain.on('open-file-dialog',function(event){ 
     electron.dialog.showOpenDialog({
@@ -53,7 +62,26 @@ electron.ipcMain.on('open-file-dialog',function(event){
     },function (files) {
         if (files) event.sender.send('selected-directory', files)
     })
-
 })
+
+
+
+// //窗口最大化
+// electron.ipcMain.on('show-window', () => {
+//     mainWindow.maximize();
+//     console.log();
+// });
+
+// //最小化
+
+// electron.ipcMain.on('hide-window', () => {
+//     mainWindow.minimize();
+// electron});
+
+// //退出
+
+// electron.ipcMain.on('window-all-closed', () => {
+//     app.quit();
+// });
 
 module.exports = electron;

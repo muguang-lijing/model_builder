@@ -11,13 +11,13 @@
 </head>
 
 <body style="-webkit-app-region: drag">
-        <div id='app'>
+        <div id='app'class = 'tbody'>
                 <div class="Initialization" v-if="initializationshow">
                         <h1 class='title'>Create model</h1><br>
                         <h1>高效的整套模型创建解决方案</h1><br>
                         <i-Button id="select-directory" @click="openfile">选择模型目录</i-Button>
                 </div>
-                <div v-if="!initializationshow">
+                <div v-if="!initializationshow"class = 'tbody'>
                         <div class='left'>
                                 <div>
                                         <h1>模型编辑</h1>
@@ -53,10 +53,10 @@
                                 </div>
                                 <div class='content'>
                                      
-                                                <Card :bordered="false" style = "width:950px">
-                                                        <p slot="title">模型创建</p>
-                                                        <i-Table size = "small" width="930" class = 'table' :columns="columns" :data="models.model"></i-Table>
-                                                </Card>
+                                        <Card :bordered="false" style= 'width:100%' >
+                                                <p slot="title">模型创建</p>
+                                                <i-Table  :height = 'getTabH'size = "small" w class = 'table' :columns="columns" :data="models.model"></i-Table>
+                                        </Card>
                                         
                                 </div>
                         </div>
@@ -85,66 +85,166 @@
                                 table: [],
                                 model:[],
                         },
+                        width:0,
+                        height:0,
                         columns:[
                                 {
                                         type: 'expand',
-                                        width: 50,
-                                        fixed: 'left',
+                                        width: 20,
+                                        align:'right',
                                         render: (h, params) => {
                                         return h(expandRow, {
                                                         props: {
                                                                 row: params.row
+                                                        },
+                                                        style: {
+                                                                'cursor':'pointer',
                                                         }
                                                 })
                                         }
                                 },
                                 {
+                                        width:'120',
                                         title: '名称',
                                         key: 'key',
-                                        width: 140,
-                                        fixed: 'left'
+                                        
+                                 
                                 },
                                 {
                                         title: '类型',
                                         key: 'type',
-                                        width: 140,
+                                        width:'150px',
                                         render:(h,params) =>{
-                                                return params.row.type.name+"("+params.row.type.ps +")";
+                                                var str = "";
+                                                var flag = true;
+                                                var num = 0;
+                                                var data = params.row.type.ps;
+                                                show(data);
+                                                return str;
+                                                function show(data){
+                                                        num++;
+                                                        if(typeof data[0] === 'object'){
+                                                                flag = false;
+                                                                str +="ARRAY("+data[0].name+"(";
+                                                                show(data[0].ps);
+                                                        }else{
+                                                                if(flag == true){                              
+                                                                    str = params.row.type.name+"("
+                                                                }
+
+                                                                for(var item of data){
+                                                                        str+=" "+item+" "          
+                                                                }
+                                                                for(var i=0; i<num; i++){
+                                                                        str+=")"
+                                                                }
+                                                               
+                                                        }
+   
+                                                }                                             
                                         }
                                 },
                                 {
                                         title: '备注描述',
                                         key: 'comment',
-                                        width: 200,
+                                        ellipsis:'true',
+                                   
                                 },
                                 {
+                                        width:'100px',
                                         title: '默认值',
                                         key: 'defaultValue',
-                                        width: 100,
+                                    
                                 },
                                 {
+                                        width:'30',
                                         title: '主键',
                                         key: 'primaryKey',
-                                        width: 100,
+                                        render:(h,params)=>{
+                                                if(params.row.primaryKey){
+         
+                                                        return h('div', [
+                                                                h('p', {
+                                                                style: {
+                                                                        color:'green'
+                                                                },
+                                                                }, '✔'),
+                                                        ]);
+                                                }else{
+                                                    
+                                                        return h('div', [
+                                                                h('p', {
+                                                                style: {
+                                                                        color:'red'
+                                                                },
+                                                                }, '✘'),
+                                                        ]);
+                                                }
+                                        }
+                                      
                                 },
                                 {
-                                        title: '是否为空',
+                                        width:'30',
+                                        title: '为空',
                                         key: 'allowNull',
-                                        width: 100,
+                                        render:(h,params)=>{
+                                                if(params.row.allowNull){
+         
+                                                        return h('div', [
+                                                                h('p', {
+                                                                style: {
+                                                                        color:'green'
+                                                                },
+                                                                }, '✔'),
+                                                        ]);
+                                                }else{
+                                                    
+                                                        return h('div', [
+                                                                h('p', {
+                                                                style: {
+                                                                        color:'red'
+                                                                },
+                                                                }, '✘'),
+                                                        ]);
+                                                }
+                                        }
+                                 
                                 },
                                 {
-                                        title: '独一性',
+                                        width:'30',
+                                        title: '独一',
                                         key: 'allowNull',
-                                        width: 100,
+                                        render:(h,params)=>{
+                                                if(params.row.allowNull){
+         
+                                                        return h('div', [
+                                                                h('p', {
+                                                                style: {
+                                                                        color:'green'
+                                                                },
+                                                                }, '✔'),
+                                                        ]);
+                                                }else{
+                                                    
+                                                        return h('div', [
+                                                                h('p', {
+                                                                style: {
+                                                                        color:'red'
+                                                                },
+                                                                }, '✘'),
+                                                        ]);
+                                                }
+                                        }
+                                  
                                 },
                                 {
                                         title: '操作',
                                         key: 'key',
-                                        width: 180,
-                                        align: 'center',
+                                        width: 60,
+                                 
                                         render: (h, params) => {
                                                 return h('div', [
-                                                        h('i-Button', {
+                                                        h('a', {
                                                         props: {
                                                                 type: 'ghost',
                                                                 size: 'small'
@@ -159,7 +259,7 @@
                                                                 }
                                                         }
                                                         }, '查看'),
-                                                        h('i-Button', {
+                                                        h('a', {
                                                         props: {
                                                                 type: 'ghost',
                                                                 size: 'small'
@@ -175,11 +275,17 @@
                                 }
                         ]
                 },
+                computed:{
+                        getTabH:function(){
+                                return this.height - 200;
+                        }
+                },
                 methods: {
                         openfile: function () {
                                 console.log(this.ipc);
                                 this.ipc.send('open-file-dialog');
                         },
+                        
 
                         selectdir: function (path) {
                                 
@@ -230,6 +336,17 @@
                         this.ipc.on('selected-directory', function (event, path) {
                                 self.selectdir(path);
                         })
+                        this.selectdir(['/home/zm/www/djk/models']);
+                        this.width = document.documentElement.clientWidth || document.body.clientWidth;
+                        this.height = document.documentElement.clientHeight || document.body.clientHeight;
+                        document.getElementsByTagName('body')[0].style.height = this.height+'px'
+                        var self = this;
+                        window.onresize = function(){
+                                self.width = document.documentElement.clientWidth || document.body.clientWidth;
+                                self.height = document.documentElement.clientHeight || document.body.clientHeight;
+                                document.getElementsByTagName('body')[0].style.height = self.height+'px'
+                        }
                 }
         })
+
 </script>
