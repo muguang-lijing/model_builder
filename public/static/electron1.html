@@ -12,16 +12,14 @@
 
 <body style="-webkit-app-region: drag">
         <div id='app'class = 'tbody'>
-
-                                     
-                                        <Card :bordered="false" style= 'width:100%' v-if='!button.add'>
-                                                <p slot="title">模型列表</p>
-                                                <i-Table  :height = 'getTabH'size = "small" w class = 'table' :columns="columns" :data="models.model"></i-Table>
-                                        </Card>
-                                        <Card :bordered="false" style= 'width:100%' v-if='button.add' >
-                                                <p slot="title">xxx表编辑</p>
-                                                <i-Table  :height = 'getTabH'size = "small"  class = 'table' :columns="columns" :data="models.model"></i-Table>
-                                        </Card>
+                <Card :bordered="false" style= 'width:100%' v-if='!button.add'>
+                        <p slot="title">模型列表</p>
+                        <i-Table  :height = 'getTabH'size = "small" w class = 'table' :columns="columns" :data="models.model"></i-Table>
+                </Card>
+                <Card :bordered="false" style= 'width:100%' v-if='button.add' >
+                        <p slot="title">xxx表编辑</p>
+                        <i-Table  :height = 'getTabH'size = "small"  class = 'table' :columns="columns" :data="models.model"></i-Table>
+                </Card>
 
         </div>
 </body>
