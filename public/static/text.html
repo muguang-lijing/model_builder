@@ -1,0 +1,29 @@
+<script type="text/javascript" src="./js/vue.js"></script>
+<script>
+    var vm = new Vue({
+        data:{
+            str:true,
+        },
+
+        methods:{
+            a:function(){
+                this.b();
+                alert(1);
+                if(this.str){
+                    a();
+                }else{
+                    return;
+                }
+                
+            },
+            b:function(){
+                alert(2);
+                this.str=false;
+            }
+        },
+
+        created(){
+            this.a();
+        }
+    })
+</script>

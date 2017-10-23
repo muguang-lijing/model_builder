@@ -20,7 +20,7 @@
                 <div v-if="!initializationshow"class = 'tbody'>
                         <div class='left'>
                                 <div>
-                                        <h1>模型编辑</h1>
+                                        <h1>MODALS</h1>
                                 </div>
                                 <div class='modles'>
                                         <div v-for = "name in models.table" @click = "modinfo(name)">
@@ -34,18 +34,50 @@
                                 <div class='header'>
                                         <p>目录 : <span> <a @click="openfile"> {{url}}</a></span></p>
                                         <i-Button type="primary" size="small" @click="button.add = true">+</i-Button>
-                                        <Modal v-model="button.add" title="创建模型" @on-ok="" @on-cancel="cancel">
+                                        <Modal v-model="button.add" title="xxx表编辑" @on-ok="upmodel" @on-cancel="">
                                                 <div>
                                                         <table>
                                                                 <tr>
-                                                                        <td>模型名称： </td>
+                                                                        <td>名称： </td>
                                                                         <td>
-                                                                                <i-Input v-model="models.name" placeholder="请输入..." style="width: 300px"></i-Input>
+                                                                                <i-Input v-model="models.name" placeholder="模型名称" style="width: 300px"></i-Input>
                                                                         </td>
                                                                 </tr>
                                                                 <tr>
-                                                                        <td></td>
-                                                                        <td><span>*模型必须使用英文名称，否则会创建失败</span></td>
+                                                                        <td>类型：</td>
+                                                                        <td>
+                                                                            <i-Select v-for = '(v,index) in models.type_num' v-model="models.type[index]" style="width:100px" @on-change="typefun">
+                                                                                <i-Option v-for="item in models.types"  :value="item.value" :key="item.value">{{ item.label }}</i-Option>
+                                                                            </i-Select>
+                                                                            <i-button @click = 'models.type_num -- '>-</i-button>   
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td>参数：</td>
+                                                                        <td>
+                                                                            <i-Input  v-for="(item,index) in models.ps_num" v-model="models.ps[index]" placeholder="参数" style="width: 100px"></i-Input>
+                                                                            <i-Select v-model="models.appoint" style="width: 100px" v-if = "models.ps_action == 'Appoint'">
+                                                                                        <i-Option v-for="item in models.appoints"  :value="item.value" :key="item.value">{{ item.label }}</i-Option>
+                                                                            </i-Select>
+                                                                            <i-button v-if = "models.ps_action == 'N'"@click = 'models.ps_num ++ '>+</i-button>    
+                                                                            <i-button v-if = "models.ps_action == 'N'"@click = 'models.ps_num -- '>-</i-button>       
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td>默认值：</td>
+                                                                        <td><i-Input v-model="models.defaultValue" placeholder="默认值" style="width: 300px"></i-Input></td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td>选项：</td>       
+                                                                        <td>
+                                                                                <Checkbox label="主键" v-model = 'models.primaryKey'> <span>主键</span></Checkbox>
+                                                                                <Checkbox label="为空" v-model = 'models.only'><span>为空</span></Checkbox>     
+                                                                                <Checkbox label="独一" v-model = 'models.allowNull'><span>独一</span></Checkbox>     
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td>备注描述：&nbsp;</td>
+                                                                        <td> <i-Input v-model="models.comment" type='textarea' placeholder="请输入备注描述..." style="width: 300px"></i-Input></td>
                                                                 </tr>
                                                         </table>
                                                 </div>
@@ -53,12 +85,12 @@
                                 </div>
                                 <div class='content'>
                                      
-                                        <Card :bordered="false" style= 'width:100%' >
-                                                <p slot="title">模型创建</p>
-                                                <i-Table  :height = 'getTabH'size = "small" w class = 'table' :columns="columns" :data="models.model"></i-Table>
+                                        <Card :bordered="false" style= 'width:100%'>
+                                                <p slot="title">模型列表</p>
+                                                <i-Table  :height = 'getTabH'size = "small" class = 'table' :columns="columns" :data="models.model"></i-Table>
                                         </Card>
-                                        
                                 </div>
+                                
                         </div>
                 </div>
         </div>
@@ -71,19 +103,153 @@
 <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
 <script type='text/javascript'>
         const ipc = require('electron').ipcRenderer
-        new Vue({
+        var app = new Vue({
                 el: '#app',
                 data: {
                         url: "www/dir/models",
                         ipc: ipc,
-                        initializationshow: false,
+                        num:0,
+                        initializationshow: true,
                         button: {
-                                add: false,
+                                add:false,
                         },
+                        model_name:'',
                         models: {
                                 name: '',
+                                type_num:1,
+                                type:[],
+                                appoint:'',
+                                defaultValue:'',
+                                comment:'',
+                                primaryKey:false,
+                                allowNull:false,
+                                only:false,
+                                ps:[],
+                                ps_num:1,
+                                ps_action:'',
+                                old_model:{},
                                 table: [],
                                 model:[],
+                                appoints:[{value:'tiny',label:'tiny'},{value:'medium',label:'medium',},{value:'long',label:'long'}],
+                                types:[
+                                        {
+                                                value: 'ARRAY',
+                                                label: 'ARRAY',
+                                                rule:{ps:'type'},
+                                        },
+                                        {
+                                                value: 'STRING',
+                                                label: 'STRING',
+                                                rule:{ps:'1'},
+                                        },
+                                        {
+                                                value: 'CHAR',
+                                                label: 'CHAR',
+                                                rule:{ps:'1'}
+                                        },
+                                        {
+                                                value: 'TEXT',
+                                                label: 'TEXT',
+                                                rule:{ps:'Appoint',value:['tiny','medium','long']}
+
+                                        },
+                                        {
+                                                value: 'INTEGER',
+                                                label: 'INTEGER',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'BIGINT',
+                                                label: 'BIGINT',
+                                                rule:{ps:'1'}
+                                        },
+                                        {
+                                                value: 'FLOAT',
+                                                label: 'FLOAT',
+                                                rule:{ps:'2'}
+                                        },
+                                        {
+                                                value: 'REAL',
+                                                label: 'REAL',
+                                                rule:{ps:'2'}
+                                        },
+                                        {
+                                                value: 'DOUBLE',
+                                                label: 'DOUBLE',
+                                                rule:{ps:'2'}
+                                        },
+                                        {
+                                                value: 'DECIMAL',
+                                                label: 'DECIMAL',
+                                                rule:{ps:'2'}
+                                        },
+                                        {
+                                                value: 'BOOLEAN',
+                                                label: 'BOOLEAN',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'TIME',
+                                                label: 'TIME',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'DATEONLY',
+                                                label: 'DATEONLY',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'HSTORE',
+                                                label: 'HSTORE',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'JSON',
+                                                label: 'JSON',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'JSONB',
+                                                label: 'JSONB',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'NOW',
+                                                label: 'NOW',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'BLOB',
+                                                label: 'BLOB',
+                                                rule:{ps:'Appoint',value:['tiny','medium','long']}
+                                        },
+                                        {
+                                                value: 'RANGE',
+                                                label: 'RANGE',
+                                                rule:{ps:'type'}
+                                        },
+                                        {
+                                                value: 'UUID',
+                                                label: 'UUID',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'UUIDV1',
+                                                label: 'UUIDV1',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'UUIDV4',
+                                                label: 'UUIDV4',
+                                                rule:{ps:'0'}
+                                        },
+                                        {
+                                                value: 'ENUM',
+                                                label: 'ENUM',
+                                                rule:{ps:'N'}
+                                        },
+                                        
+                                ]
                         },
                         width:0,
                         height:0,
@@ -213,7 +379,7 @@
                                 {
                                         width:'30',
                                         title: '独一',
-                                        key: 'allowNull',
+                                        key: 'unique',
                                         render:(h,params)=>{
                                                 if(params.row.allowNull){
          
@@ -241,7 +407,6 @@
                                         title: '操作',
                                         key: 'key',
                                         width: 60,
-                                 
                                         render: (h, params) => {
                                                 return h('div', [
                                                         h('a', {
@@ -255,10 +420,27 @@
                                                         },
                                                         on: {
                                                                 click: () => {
-                                                                this.show(params.index)
+                                                                        app.models.ps_num = 1;
+                                                                        app.models.type_num = 1;
+                                                                        app.models.ps = [];
+                                                                        app.models.type = ["STRING"];
+                                                                        app.models.appoint = "";
+                                                                        app.models.defaultValue = "";
+                                                                        app.old_model = params.row;
+                                                                        app.old_index = params.index;
+                                                              
+                                                                        app.button.add = true;
+                                                                        app.models.name = params.row.key
+                                                                        app.models.comment = params.row.comment
+                                                                        app.uptype(params.row.type);
+                                                                        app.models.defaultValue = params.row.defaultValue
+                                                                        app.models.primaryKey  = params.row.primaryKey
+                                                                        app.models.allowNull  = params.row.allowNull
+                                                                        app.models.only  = params.row.unique
+                                                                        
                                                                 }
                                                         }
-                                                        }, '查看'),
+                                                        }, '编辑'),
                                                         h('a', {
                                                         props: {
                                                                 type: 'ghost',
@@ -266,7 +448,7 @@
                                                         },
                                                         on: {
                                                                 click: () => {
-                                                                this.remove(params.index)
+                                                                        
                                                                 }
                                                         }
                                                         }, '删除')
@@ -295,6 +477,7 @@
                                                         title: '选择模型目录成功',
                                                         desc:""
                                                 });
+                                                localStorage.setItem("path",path[0]);
                                                 this.url = path[0];
                                                 this.readfile();
                                                 this.initializationshow = false;
@@ -315,7 +498,6 @@
                                                         desc:""
                                                 });
                                                 this.models.table = res.body.out.datas;
-                                                console.log(JSON.stringify(this.models.table,0,4));
                                         }
                                 })
                         },
@@ -323,20 +505,168 @@
                         modinfo:function(name){
                                 this.$http.get("/main/model_info?model_name="+name).then(res => {
                                         this.models.model = res.body.out.infos,0,4;
-                                }).catch(err =>{
-                                        this.$Notice.error({
-                                                title: '读读取模型失败',
-                                                desc:""
-                                        });
+                                        this.model_name = name;
+                                        console.log(JSON.stringify(this.models.model,0,4));
                                 })
-                        }
+                        },
+
+                        typefun:function(name){
+                                alert(1);
+                               this.models.ps = [];
+                               for(item of this.models.types){
+                                        if(item.value == name){
+                                                
+                                                switch(item.rule.ps){
+                                                        case '0':
+                                                                this.models.ps_num = 0;
+                                                                this.models.ps_action = 'kong';
+                                                        break;
+                                                        case '1':
+                                                 
+                                                                this.models.ps_num = 1;
+                                                                this.models.ps_action = 'kong';
+                                                        break;
+                                                        case '2':
+                                                                this.models.ps_num = 2;
+                                                                this.models.ps_action = 'kong';
+                                                        break;
+                                                        case 'N':
+                                                                this.models.ps_num = 0;
+                                                                this.models.ps_action = 'N';
+                                                        break;
+                                                        case 'type':
+                                                               
+                                                                this.models.ps_num = 0;
+                                                                this.models.type_num ++;
+
+                                                                this.models.ps_action = 'type';
+                                                                
+                                                        break;
+                                                        case 'Appoint':
+                                                                this.models.ps_num = 0;
+                                                                this.models.ps_action = 'Appoint';
+                                                        break;
+                                                }
+                                        }
+                               }
+                        },
+
+                        uptype:function(typearr){
+                                this.num = 0;
+                                var ps = this.arrtype(typearr);
+                                if(ps){
+                                        var self = this;
+
+                                        setTimeout(function() {
+                                                self.models.ps_num = ps.length;    
+                                                self.models.type_num = self.num+1;                                            
+                                        }, 30);
+
+                                        setTimeout(function(){
+                                                self.models.ps = ps;
+                                        },40)
+
+                                        // this.models.ps = ps;
+
+                                }
+                                
+                        },
+
+                        arrtype:function(v){
+                                if(v.name == 'ARRAY'){
+                                        alert(this.models.type);
+                                        this.models.type[this.num] = v.name
+                                        this.num++
+                                      
+                                        
+                                        alert(2);
+                                        return this.arrtype(v.ps[0])
+                                        
+                                }else if(v.name == 'BLOB' || v.name =='TEXT'){
+                                        this.ps_action = 'Appoint'
+                                        this.appoint = v.ps[0];
+                                }else if(v.name == "EMUM"){
+                                        this.ps_action = 'N'
+                                        return v.ps;
+                                }else{
+                                        this.models.type[this.num] = v.name;
+                                        return v.ps;
+                                }
+                        },
+
+                        upmodel:function(){
+                               console.log(JSON.stringify(this.old_model,0,4));
+                               this.old_model.key = this.models.name;
+                        //        this.old_model.type.name = this.models.type[0];
+                               var data = {};
+                               var index = 0;
+                               var self = this;
+                              
+                               function get_arr_type(data){
+                                        if(self.models.type[index] == "ARRAY"){
+                                                if(index == 0){
+                                                        data['name'] = self.models.type[index]
+                                                        data['ps'] = [];
+                                                        index++;
+                                                        get_arr_type(data.ps);          
+                                                }else{
+                                                        data[0] = {};
+                                                        data[0]['name'] = self.models.type[index]
+                                                        data[0]['ps'] = [];
+                                                        index++;
+                                                        get_arr_type(data.ps);      
+                                                }                           
+                                        }else{
+                                                if(index == 0){
+                                                        data['name'] = self.models.type[index]
+                                                        data['ps'] = self.models.ps
+                                                }else{
+                                                        data[0] = {};
+                                                        data[0]['name'] = self.models.type[index];
+                                                        data[0]['ps'] = self.models.ps;
+                                                }
+                                 
+                                        }
+                               }
+
+                              
+
+                               if(this.models.type[0] == "TEXT" || this.old_model.type[0] == "BLOB"){
+                                    this.old_model.type.name = this.models.type[0]
+                                    this.old_model.type.ps = [this.models.appoint];
+                               }else{
+                                    get_arr_type(data);
+                                    console.log(JSON.stringify(data,0,4));
+                                    this.old_model.type = data;
+                               }
+                               this.old_model.comment = this.models.comment;
+                               this.old_model['defaultValue'] = this.models.defaultValue;
+                               this.old_model['primaryKey'] = this.models.primaryKey; 
+                               this.old_model['allowNull'] = this.models.allowNull; 
+                               this.old_model['unique'] = this.models.only;     
+                               console.log(JSON.stringify(this.old_model,0,4));
+                               
+                               var newdata = this.models.model;
+                               newdata[this.old_index] = this.old_model;
+                               console.log(JSON.stringify(newdata,0,4))
+
+                               this.$http.post("/main/save_model",{model_name:this.model_name,model_obj:this.models.model}).then(res => {
+                                        console.log(JSON.stringify(res.body,0,4));
+                                })
+                        },
+
+
                 },
                 created() {
+                        var path = localStorage.getItem("path");
                         var self = this;
                         this.ipc.on('selected-directory', function (event, path) {
                                 self.selectdir(path);
                         })
-                        this.selectdir(['/home/zm/www/djk/models']);
+
+                        if(path){
+                                this.selectdir([path]);
+                        }
                         this.width = document.documentElement.clientWidth || document.body.clientWidth;
                         this.height = document.documentElement.clientHeight || document.body.clientHeight;
                         document.getElementsByTagName('body')[0].style.height = this.height+'px'

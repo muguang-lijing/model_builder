@@ -233,7 +233,8 @@ module.exports = {
         for (let f of fields){
             out_str += unfx_iteminfo(f);
         }
-        out_str = out_str.slice(0,-1);
+        console.log("\nout_str1:\n"+out_str);
+        out_str = out_str.trim().slice(0,-1);
         console.log("\nout_str:\n"+out_str);
         return out_str;
     }
